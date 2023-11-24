@@ -1,7 +1,9 @@
-var url = "mongodb://127.0.0.1:27017/";
+require('dotenv').config();
+
+var url = process.env.MONGODB;
 const { MongoClient } = require('mongodb');
 const client = new MongoClient(url);
-const database = client.db("TaskTracker")
+const database = client.db("MargRakshak");
 
 let _database;
 
