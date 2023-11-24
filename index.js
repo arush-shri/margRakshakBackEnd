@@ -1,6 +1,7 @@
 const express = require("express");
 const application = express();
 const contributionRoute = require('./routes/contributeRoute')
+const navigationRoute = require('./routes/navRoute')
 const database = require('./controllers/dbConnector') 
 
 const cors = require("cors");
