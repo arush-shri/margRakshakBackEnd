@@ -2,24 +2,15 @@ const express = require("express");
 const contributionRoute = express.Router();
 const contributionController = require('../controllers/contributionController')
 
-contributionRoute.post('/accidentArea', async (req,res) => {
+contributionRoute.post('/makeContribution', async (req,res) => {
     const database = req.app.locals.database;
-    contributionController.AccidentArea(database, req.body.latitude, req.body.longitude);
+    const result = await contributionController.MakeContribution(database, req.body.collectionName, req.body.latitude, req.body.longitude);
+    if(result === true){
+        res.status(200).send(true);
+    }
+    else{
+        res.status(500).send(false);
+    }
 });
 
-contributionRoute.post('/blindTurn', async (req,res) => {
-    const database = req.app.locals.database;
-    contributionController.BlindTurn(database, req.body.latitude, req.body.longitude);
-});
-
-contributionRoute.post('/forestRoad', async (req,res) => {
-    const database = req.app.locals.database;
-    contributionController.ForestRoad(database, req.body.latitude, req.body.longitude);
-});
-
-contributionRoute.post('/ghatRegion', async (req,res) => {
-    const database = req.app.locals.database;
-    contributionController.GhatRegion(database, req.body.latitude, req.body.longitude);
-})
-
-module.exports = contributionRoute
+module.exports = contributionRoute;
