@@ -2,6 +2,10 @@ async function initiateSignup( database, email ){
     const usersDB = database.collection("users");
     const user = await usersDB.findOne({ "emailId": email });
     if(user){
+        database.collection("navigation").insertOne({
+            "emailId": email,
+            "Location": null
+        });
         return true;
     }
     else{
