@@ -1,10 +1,12 @@
 async function MakeContribution (database, collectionName, latitude, longitude) {
     const collection = database.collection(collectionName);
-    const location = {
-        "latitude": latitude,
-        "longitude": longitude
+    const query = {
+        location: {
+            "type": 'Point',
+            coordinates: [longitude, latitude]
+        }
     };
-    const result = await collection.insertOne(location);
+    const result = await collection.insertOne(query);
     if(result.acknowledged === true){
         return true;
     }

@@ -19,6 +19,7 @@ navigating.post('/myLocation', async (req,res) => {
 });
 navigating.get('/getDangers', async (req,res) => {
     const database = req.app.locals.database;
+    const result = await navigatingController.GetDangers(database, myLocation)
 });
 
 module.exports = navigating;
