@@ -40,4 +40,15 @@ async  function setHomeLocation( database, email, latitude, longitude ){
     }
 }
 
-module.exports = { initiateSignup, setHomeLocation };
+async  function getHomeLocation( database, email ){
+    const usersDB = database.collection("users");
+    const user = await usersDB.findOne({ "emailId": email });
+    if(user){
+        return user;
+    }
+    else{
+        return false;
+    }
+}
+
+module.exports = { initiateSignup, setHomeLocation, getHomeLocation };

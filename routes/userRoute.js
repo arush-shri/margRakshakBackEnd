@@ -13,14 +13,25 @@ userRouter.post('/createUser', async (req,res) => {
     }
 });
 
-userRouter.post('/updateHomeLocation', async (req,res) => {
+userRouter.post('/updateHomeLocation/:email', async (req,res) => {
     const database = req.app.locals.database;
-    const result = await userController.setHomeLocation(database, req.body.email, req.body.latitude, req.body.longitude);
+    const email = req.params.email;
+    const result = await userController.setHomeLocation(database, email, req.body.latitude, req.body.longitude);
     if(result === true){
         res.status(200).send(result);
     }
     else{
         res.status(402).send(result);
+    }
+});
+
+userRouter.get('/getHomeLocation/:email', async (req, res) => {
+    const database = req.app.locals.database;
+    const email = req.params.email;
+    console.log(email)
+    const result = await userController.getHomeLocation(database, email);
+    if(result){
+        res.status(200).send(result)
     }
 });
 
