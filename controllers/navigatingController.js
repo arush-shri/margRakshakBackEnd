@@ -71,9 +71,9 @@ async function GetDangers(database, location){
     await CreateIndex(database, "UserPosition");
     result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "RailwayCross", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
+    result.concat(await FindDanger(database, "ForestArea", location.longitude, location.latitude));
+    result.concat(await FindDanger(database, "GhatRegion", location.longitude, location.latitude));
+    result.concat(await FindDanger(database, "OtherRegion", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "UserPosition", location.longitude, location.latitude));
     return result;
 }
