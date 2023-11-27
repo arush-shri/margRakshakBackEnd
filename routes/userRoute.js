@@ -2,9 +2,22 @@ const express = require("express");
 const userRouter = express.Router();
 const userController = require('../controllers/userController')
 
-userRouter.post('/createUser', async (req,res) => {
+userRouter.get('/createUser/:email', async (req,res) => {
     const database = req.app.locals.database;
-    const result = await userController.initiateSignup(database, req.body.email);
+    const email = req.params.email;
+    const result = await userController.initiateSignup(database, email);
+    if(result === true){
+        res.status(200).send(result);
+    }
+    else{
+        res.status(402).send(result);
+    }
+});
+
+userRouter.get('/userExists/:email', async (req,res) => {
+    const database = req.app.locals.database;
+    const email = req.params.email;
+    const result = await userController.checkExistence(database, email);
     if(result === true){
         res.status(200).send(result);
     }

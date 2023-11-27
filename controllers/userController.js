@@ -19,6 +19,17 @@ async function initiateSignup( database, email ){
     }
 }
 
+async function checkExistence( database, email ){
+    const usersDB = database.collection("users");
+    const user = await usersDB.findOne({ "emailId": email });
+    if(user){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 async  function setHomeLocation( database, email, latitude, longitude ){
     const usersDB = database.collection("users");
     const location = {
@@ -51,4 +62,4 @@ async  function getHomeLocation( database, email ){
     }
 }
 
-module.exports = { initiateSignup, setHomeLocation, getHomeLocation };
+module.exports = { initiateSignup, setHomeLocation, getHomeLocation, checkExistence };
