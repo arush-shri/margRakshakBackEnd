@@ -1,22 +1,64 @@
 async function SetMyLocation(database, email, latitude, longitude){
-    const DBCollection = database.collection("navigation");
+    const DBCollection = database.collection("UserLocation");
     const location = {
         "latitude": latitude,
         "longitude": longitude
     };
     const filter = {"emailId": email};
-    const updateQuery = {
-        $set:{
-            "Location": location
-        }
-    };
-    const user = await DBCollection.findOne({ "emailId": email });
+    const user = await DBCollection.findOne(filter);
     if(user){
+        const updateQuery = {
+            $set:{
+                "Location": location
+            }
+        };
         const result = await DBCollection.updateOne(filter, updateQuery);
         if(result.modifiedCount === 1){
             return true;
         }
     }
+    else{
+        const result = await DBCollection.insertOne({ "emailId": email, "Location": location });
+        if(result.acknowledged === true){
+            return true;
+        }
+    }
+}
+
+async function SetUserLocation(database, latitude, longitude, objectID){
+    const collection = database.collection("UserPosition");
+    const position = await collection.findOne({_id: objectID});
+    if(position){
+        const filter = { _id: objectID };
+        const update = {
+            $set: {
+                'location.coordinates': [longitude, latitude]
+            }
+        };
+        await collection.updateOne(filter, update);
+        return objectID;
+    }
+    else{
+        const query = {
+            location: {
+                "type": 'Point',
+                coordinates: [longitude, latitude]
+            }
+        };
+        const result = await collection.insertOne(query);
+        if(result.acknowledged === true){
+            return result.insertedId;
+        }
+        else{
+            return false;
+        }
+    }
+}
+
+async function SharedUserLocation(database, email){
+    const DBCollection = database.collection("UserLocation");
+    const result = await DBCollection.findOne({ "emailId": email });
+    return result.Location;
 }
 
 async function GetDangers(database, location){
@@ -26,11 +68,13 @@ async function GetDangers(database, location){
     await CreateIndex(database, "ForestRoad");
     await CreateIndex(database, "GhatRegion");
     await CreateIndex(database, "OtherArea");
+    await CreateIndex(database, "UserPosition");
     result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "RailwayCross", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
     result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
+    result.concat(await FindDanger(database, "UserPosition", location.longitude, location.latitude));
     return result;
 }
 
@@ -68,4 +112,4 @@ async function CreateIndex(database, collectionName){
     });
 }
 
-module.exports = { SetMyLocation, GetDangers };
+module.exports = { SetMyLocation, GetDangers, SharedUserLocation, SetUserLocation };
