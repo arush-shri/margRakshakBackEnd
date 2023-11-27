@@ -17,7 +17,7 @@ navigating.post('/myLocation', async (req,res) => {
     }
     if(result){
         UserPositionID = result
-        res.status(200).send(true);
+        res.status(200).send(objectId);
     }
     else{
         res.status(500).send(false);
@@ -27,6 +27,7 @@ navigating.post('/myLocation', async (req,res) => {
 navigating.get('/getDangers', async (req,res) => {
     const database = req.app.locals.database;
     const result = await navigatingController.GetDangers(database, myLocation);
+    res.status(200).send(result);
 });
 
 navigating.get('/getUserLocation/:email', async (req,res) => {

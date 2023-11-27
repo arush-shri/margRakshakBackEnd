@@ -62,19 +62,19 @@ async function SharedUserLocation(database, email){
 }
 
 async function GetDangers(database, location){
-    const result = []
+    const result = {};
     await CreateIndex(database, "AccidentArea");
     await CreateIndex(database, "RailwayCross");
     await CreateIndex(database, "ForestRoad");
     await CreateIndex(database, "GhatRegion");
     await CreateIndex(database, "OtherArea");
     await CreateIndex(database, "UserPosition");
-    result.concat(await FindDanger(database, "AccidentArea", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "RailwayCross", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "ForestArea", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "GhatRegion", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "OtherRegion", location.longitude, location.latitude));
-    result.concat(await FindDanger(database, "UserPosition", location.longitude, location.latitude));
+    result["AccidentArea"] = await FindDanger(database, "AccidentArea", location.longitude, location.latitude);
+    result["RailwayCross"] = await FindDanger(database, "RailwayCross", location.longitude, location.latitude);
+    result["ForestArea"] = await FindDanger(database, "ForestArea", location.longitude, location.latitude);
+    result["GhatRegion"] = await FindDanger(database, "GhatRegion", location.longitude, location.latitude);
+    result["OtherRegion"] = await FindDanger(database, "OtherRegion", location.longitude, location.latitude);
+    result["UserPosition"] = await FindDanger(database, "UserPosition", location.longitude, location.latitude);
     return result;
 }
 
