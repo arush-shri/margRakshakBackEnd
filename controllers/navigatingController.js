@@ -28,10 +28,9 @@ async function SetMyLocation(database, email, latitude, longitude){
 }
 
 async function SetUserLocation(database, latitude, longitude, objectID){
-    console.log(objectID);
     const collection = database.collection("UserPosition");
     try{
-        const object = new ObjectId(objectID);
+        const object = new ObjectId(JSON.parse(objectID));
         const userPosition = await collection.findOne({_id: object});
         if(userPosition){
             const filter = { _id: objectID };
@@ -43,21 +42,24 @@ async function SetUserLocation(database, latitude, longitude, objectID){
             await collection.updateOne(filter, update);
             return objectID;
         }
-    }
-    catch{
-        const query = {
-            location: {
-                "type": 'Point',
-                coordinates: [longitude, latitude]
-            }
-        };
-        const result = await collection.insertOne(query);
-        if(result.acknowledged === true){
-            return result.insertedId;
-        }
         else{
-            return false;
+            const query = {
+                location: {
+                    "type": 'Point',
+                    coordinates: [parseFloat(longitude, 10), parseFloat(latitude, 10)]
+                }
+            };
+            const result = await collection.insertOne(query);
+            if(result.acknowledged === true){
+                return result.insertedId;
+            }
+            else{
+                return false;
+            }
         }
+    }
+    catch(error){
+        console.log(error);
     }
 }
 
@@ -67,7 +69,7 @@ async function SharedUserLocation(database, email){
     return result.Location;
 }
 
-async function GetDangers(database, location){
+async function GetDangers(database, location, distance){
     const result = {};
     CreateIndex(database, "AccidentArea");
     CreateIndex(database, "RailwayCross");
@@ -75,16 +77,16 @@ async function GetDangers(database, location){
     CreateIndex(database, "GhatRegion");
     CreateIndex(database, "OtherRegion");
     CreateIndex(database, "UserPosition");
-    result["AccidentArea"] = await FindDanger(database, "AccidentArea", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
-    result["RailwayCross"] = await FindDanger(database, "RailwayCross", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
-    result["ForestArea"] = await FindDanger(database, "ForestArea", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
-    result["GhatRegion"] = await FindDanger(database, "GhatRegion", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
-    result["OtherRegion"] = await FindDanger(database, "OtherRegion", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
-    result["UserPosition"] = await FindDanger(database, "UserPosition", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10));
+    result["AccidentArea"] = await FindDanger(database, "AccidentArea", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
+    result["RailwayCross"] = await FindDanger(database, "RailwayCross", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
+    result["ForestArea"] = await FindDanger(database, "ForestArea", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
+    result["GhatRegion"] = await FindDanger(database, "GhatRegion", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
+    result["OtherRegion"] = await FindDanger(database, "OtherRegion", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
+    result["UserPosition"] = await FindDanger(database, "UserPosition", parseFloat(location.longitude, 10), parseFloat(location.latitude, 10), distance);
     return result;
 }
 
-async function FindDanger(database, collectionName, myLongitude, myLatitude){
+async function FindDanger(database, collectionName, myLongitude, myLatitude, distance){
     return await database.collection(collectionName).find({
         location: {
             $near: {
@@ -92,7 +94,7 @@ async function FindDanger(database, collectionName, myLongitude, myLatitude){
                     type: 'Point',
                     coordinates: [myLongitude, myLatitude],
                 },
-                $maxDistance: 1000,
+                $maxDistance: parseInt(distance, 10),
             },
         },
     }).toArray((err, documents) => {

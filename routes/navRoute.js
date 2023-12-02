@@ -26,10 +26,10 @@ navigating.post('/myLocation', async (req,res) => {
     }
 });
 
-navigating.get('/getDangers', async (req,res) => {
+navigating.get('/getDangers/:distance', async (req,res) => {
     const database = req.app.locals.database;
-    console.log(myLocation);
-    const result = await navigatingController.GetDangers(database, myLocation);
+    console.log(req.params.distance);
+    const result = await navigatingController.GetDangers(database, myLocation, req.params.distance);
     console.log(result);
     res.status(200).send(result);
 });
