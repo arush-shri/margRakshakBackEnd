@@ -12,7 +12,7 @@ async function MakeContribution (database, collectionName, latitude, longitude, 
         const query = {
             location: {
                 "type": 'Point',
-                coordinates: [longitude, latitude]
+                coordinates: [parseFloat(longitude, 10), parseFloat(latitude, 10)]
             }
         };
         const result = await collection.insertOne(query);

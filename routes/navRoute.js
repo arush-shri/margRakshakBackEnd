@@ -4,19 +4,21 @@ const navigatingController = require('../controllers/navigatingController');
 
 let myLocation;
 let UserPositionID;
+
 navigating.post('/myLocation', async (req,res) => {
     const database = req.app.locals.database;
+    console.log(req.body);
     myLocation = {
         "latitude": req.body.latitude,
         "longitude": req.body.longitude
     };
     const result = await navigatingController.SetMyLocation(database, req.body.email, req.body.latitude, req.body.longitude);
-    const objectId = await navigatingController.SetUserLocation(database, req.body.latitude, req.body.longitude, UserPositionID);
+    const objectId = await navigatingController.SetUserLocation(database, req.body.latitude, req.body.longitude, req.body.objectId);
     if(objectId){
         UserPositionID = objectId;
     }
     if(result){
-        UserPositionID = result
+        UserPositionID = objectId;
         res.status(200).send(objectId);
     }
     else{
@@ -26,7 +28,9 @@ navigating.post('/myLocation', async (req,res) => {
 
 navigating.get('/getDangers', async (req,res) => {
     const database = req.app.locals.database;
+    console.log(myLocation);
     const result = await navigatingController.GetDangers(database, myLocation);
+    console.log(result);
     res.status(200).send(result);
 });
 
