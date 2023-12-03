@@ -31,13 +31,20 @@ navigating.get('/getDangers/:distance', async (req,res) => {
     const database = req.app.locals.database;
     console.log(req.params.distance);
     const result = await navigatingController.GetDangers(database, myLocation, req.params.distance);
-    if(UserPositionID){
-        const obj = new ObjectId(UserPositionID);
-        const indexToRemove = result.UserPosition.findIndex(item => item._id.toString() === UserPositionID);
-        if (indexToRemove !== -1) {
-            result.UserPosition.splice(indexToRemove, 1);
+    try{
+        if(UserPositionID){
+            
+            const obj = new ObjectId(JSON.parse(UserPositionID));
+            const indexToRemove = result.UserPosition.findIndex(item => item._id.toString() === obj.toString());
+            if (indexToRemove !== -1) {
+                result.UserPosition.splice(indexToRemove, 1);
+            }
         }
     }
+    catch(error){
+        console.log(error);
+    }
+    console.log(result);
     res.status(200).send(result);
 });
 

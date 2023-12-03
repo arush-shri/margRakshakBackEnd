@@ -14,7 +14,7 @@ contributionRoute.post('/makeContribution', async (req,res) => {
     }
 });
 
-contributionRoute.get('/getOtherName', async (req,res) => {
+contributionRoute.post('/getOtherName', async (req,res) => {
     const database = req.app.locals.database;
     const result = contributionController.getOtherName(database, req.body.latitude, req.body.longitude);
     if(result){
