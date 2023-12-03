@@ -3,8 +3,8 @@ async function MakeContribution (database, collectionName, latitude, longitude, 
     const check2 = await database.collection("RailwayCross").findOne({'location.coordinates': [ longitude, latitude ]});
     const check3 = await database.collection("ForestRoad").findOne({'location.coordinates': [ longitude, latitude ]});
     const check4 = await database.collection("GhatRegion").findOne({'location.coordinates': [ longitude, latitude ]});
-    const check5 = await database.collection("OtherArea").findOne({'location.coordinates': [ longitude, latitude ]});
-    if(collectionName === "OtherArea"){
+    const check5 = await database.collection("OtherRegion").findOne({'location.coordinates': [ longitude, latitude ]});
+    if(collectionName === "OtherRegion"){
         setOtherName(database, latitude, longitude, name);
     }
     if(!(check1 && check2 && check3 && check4 && check5)){
