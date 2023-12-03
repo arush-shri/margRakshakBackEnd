@@ -30,17 +30,19 @@ async function SetMyLocation(database, email, latitude, longitude){
 async function SetUserLocation(database, latitude, longitude, objectID){
     const collection = database.collection("UserPosition");
     try{
-        const object = new ObjectId(JSON.parse(objectID));
-        const userPosition = await collection.findOne({_id: object});
-        if(userPosition){
-            const filter = { _id: objectID };
-            const update = {
-                $set: {
-                    'location.coordinates': [longitude, latitude]
-                }
-            };
-            await collection.updateOne(filter, update);
-            return objectID;
+        if(objectID){
+            const object = new ObjectId(JSON.parse(objectID));
+            const userPosition = await collection.findOne({_id: object});
+            if(userPosition){
+                const filter = { _id: objectID };
+                const update = {
+                    $set: {
+                        'location.coordinates': [longitude, latitude]
+                    }
+                };
+                await collection.updateOne(filter, update);
+                return objectID;
+            } 
         }
         else{
             const query = {

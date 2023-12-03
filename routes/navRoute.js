@@ -1,6 +1,7 @@
 const express = require("express");
 const navigating = express.Router();
 const navigatingController = require('../controllers/navigatingController');
+const { ObjectId } = require("mongodb");
 
 let myLocation;
 let UserPositionID;
@@ -30,7 +31,13 @@ navigating.get('/getDangers/:distance', async (req,res) => {
     const database = req.app.locals.database;
     console.log(req.params.distance);
     const result = await navigatingController.GetDangers(database, myLocation, req.params.distance);
-    console.log(result);
+    if(UserPositionID){
+        const obj = new ObjectId(UserPositionID);
+        const indexToRemove = result.UserPosition.findIndex(item => item._id.toString() === UserPositionID);
+        if (indexToRemove !== -1) {
+            result.UserPosition.splice(indexToRemove, 1);
+        }
+    }
     res.status(200).send(result);
 });
 
